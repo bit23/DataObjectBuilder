@@ -318,8 +318,19 @@ namespace bit23
         {
             // Declaring method builder
 
+            var interfaceHasSetMethod = interfacePropertyInfo.SetMethod != null;
+
             // Method attributes
-            var methodAttributes = MethodAttributes.Family | MethodAttributes.HideBySig | MethodAttributes.SpecialName;
+            var methodAttributes = MethodAttributes.HideBySig | MethodAttributes.SpecialName;
+
+            if (interfaceHasSetMethod)
+            {
+                methodAttributes |= MethodAttributes.Public | MethodAttributes.Virtual;
+            }
+            else
+            {
+                methodAttributes |= MethodAttributes.Family;
+            }
 
             // set method
             var methodName = $"set_{interfacePropertyInfo.Name}";
@@ -340,6 +351,12 @@ namespace bit23
             gen.Emit(OpCodes.Ldarg_1);
             gen.Emit(OpCodes.Stfld, backingField);
             gen.Emit(OpCodes.Ret);
+
+            if (interfaceHasSetMethod)
+            {
+                var interfacePropertySet = interfacePropertyInfo.GetSetMethod();
+                typeBuilder.DefineMethodOverride(setMethod, interfacePropertySet);
+            }
 
             return setMethod;
         }
