@@ -18,8 +18,10 @@ namespace bit23.Examples
 
     class Program
     {
-        static void PrintPerson(IPersonDTO person)
+        static void PrintResult(string exampleName, IPersonDTO person)
         {
+            Console.WriteLine($"{exampleName}:");
+            Console.WriteLine();
             Console.WriteLine($"FirstName: {person.FirstName}");
             Console.WriteLine($"LastName: {person.LastName}");
             Console.WriteLine($"Gender: {person.Gender}");
@@ -35,7 +37,7 @@ namespace bit23.Examples
                 ["Gender"] = "Male",
             });
 
-            PrintPerson(person);
+            PrintResult("IDictionary", person);
         }
 
         static void ExampleAnonymousObject()
@@ -47,7 +49,7 @@ namespace bit23.Examples
                 Gender = "Male",
             });
 
-            PrintPerson(person);
+            PrintResult("AnonymousObject", person);
         }
 
         static void ExampleExpandoObject()
@@ -59,7 +61,7 @@ namespace bit23.Examples
 
             var person = DataObjectBuilder.Default.Create<IPersonDTO>(data);
 
-            PrintPerson(person);
+            PrintResult("ExpandoObject", person);
         }
 
         static void ExampleJObject()
@@ -71,7 +73,7 @@ namespace bit23.Examples
 
             var person = DataObjectBuilder.Default.Create<IPersonDTO>(data);
 
-            PrintPerson(person);
+            PrintResult("JObject", person);
         }
 
         static void ExampleValueTuple()
@@ -80,7 +82,7 @@ namespace bit23.Examples
 
             var person = DataObjectBuilder.Default.Create<IPersonDTO>(data);
 
-            PrintPerson(person);
+            PrintResult("ValueTuple", person);
         }
 
         static void ExampleValueTupleWithNames()
@@ -89,7 +91,7 @@ namespace bit23.Examples
 
             var person = DataObjectBuilder.Default.Create<IPersonDTO>(data, new[] { "FirstName", "LastName", "Gender" });
 
-            PrintPerson(person);
+            PrintResult("ValueTupleWithNames", person);
         }
 
         static void ExampleTuple()
@@ -98,7 +100,7 @@ namespace bit23.Examples
 
             var person = DataObjectBuilder.Default.Create<IPersonDTO>(data);
 
-            PrintPerson(person);
+            PrintResult("Tuple", person);
         }
 
         static void ExampleTupleWithNames()
@@ -107,7 +109,7 @@ namespace bit23.Examples
 
             var person = DataObjectBuilder.Default.Create<IPersonDTO>(data, new[] { "FirstName", "LastName", "Gender" });
 
-            PrintPerson(person);
+            PrintResult("TupleWithNames", person);
         }
 
         static void ExampleObjectInstance()
@@ -121,7 +123,7 @@ namespace bit23.Examples
 
             var person = DataObjectBuilder.Default.Create<IPersonDTO>(otherPerson);
 
-            PrintPerson(person);
+            PrintResult("ObjectInstance", person);
         }
 
 
@@ -143,6 +145,7 @@ namespace bit23.Examples
             options.TransformValue = (name, value) => $"***{value}***";
 
             var factory = DataObjectBuilder.Factory<IPersonDTO>(options);
+
             var person = factory.Create(new
             {
                 FirstName = "Riccardo",
@@ -150,15 +153,12 @@ namespace bit23.Examples
                 Gender = "Male",
             });
 
-            PrintPerson(person);
+            PrintResult("Factory", person);
         }
 
 
         static void Main(string[] args)
         {
-            // ### Factory example ###
-            ExampleFactory();
-
             // ### IDictionary example ###
             ExampleIDictionary();
 
@@ -181,6 +181,9 @@ namespace bit23.Examples
 
             // ### Object Instance example ###
             ExampleObjectInstance();
+
+            // ### Factory example ###
+            ExampleFactory();
 
             Console.ReadLine();
         }

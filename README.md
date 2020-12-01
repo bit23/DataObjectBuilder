@@ -1,44 +1,55 @@
 
 # DataObjectBuilder
 
-Nella sua descrizione più semplice è possibile affermare che *DataObjectBuilder* permette la creazione di "istanze di interfacce" a partire da un'istanza di un oggetto qualunque e che non implementi l'interfaccia in questione.
+Defining it in the simplest way you can say that *DataObjectBuilder* allows the creation of "interface instances".  
+The creation can be made from an instance of any object (which obviously does not implement the interface in question), an Anonymous Object, a JObject, a Tuple or ValueTuple, a Dictionary or a dynamic object.
 
-## Premessa
 
-Le interfacce sono per costruzione degli oggetti strutturati vuoti e non istanziabili, pertanto per poter disporre di una istanza che aderisca a tale modello di interfaccia, è necessario definire una classe che la implementi e successivamente istanziarla per poterla utilizzare.  
-In molti casi la classe definita implementarà le proprietà dell'interfaccia e niente altro, creando così semplicemente un contenitore di dati. Ne risulta che la scrittura di una classe che deve solo esporre proprietà o campi può essere un'operazione noiosa e inutilmente costosa in termini di tempo.  
+## Introduction
 
-## Quando è utile?
-Un caso tipico nel quale è possibile risparmiare tempo e numero di file nel progetto può essere trovato nei Data Transfer Object (DTO), il cui compito è solo quello di ospitare informazioni da trasferire da un "sistema" ad un altro. Utilizzando *DataObjectBuilder* sarà possibile gestire il problema definendo solo un'interfaccia che rappresenti il DTO e al momento di generare un'"istanza di interfaccia" basterà chiamare il metodo ```Create<TInterface>(source)```, dove source può essere un qualunque oggetto strutturato: ```Object``` (con proprietà),  ```AnonymousObject```, ```JObject```, ```Tuple```, ```ValueTuple```, ```IDictionary<string, object>```, ```ExpandoObject``` (dynamic).  
-Un altro caso può essere quello in cui si ha la necessità di "ridurre" il numero di informazioni di una classe rimuovendo alcune proprietà dall'oggetto. Invece di creare una nuova classe ridotta o una gerarchia di classi e sottoclassi, è possibile definire un'interfaccia con le sole proprietà che si vogliono esporre e lasciare che il metodo ```Create<TInterface>(source)``` si occupi di trasferire le informazioni dalla classe all'"istanza di interfaccia" creata per le proprietà definite nell'interfaccia stessa.  
-Ovviamente i casi non si limitano a solo questi due, ma sono sicuramente i più tipici, che probabilmente quasi tutti gli sviluppatori hanno incontrato nel corso del proprio lavoro.
+Interfaces are, by construction, definitions of structured objects, empty and not instantiable, so in order to have an instance that adheres to this interface model, it is necessary to define a class that implements it and, subsequently, instantiate it in order to use.  
+In many cases the defined class will implement the interface properties and nothing else, thus simply creating a data container. As a result, writing a class which only needs to display properties or fields, can be a tedious and unnecessarily time-consuming operation.  
 
-## Funzionalità avanzate
+
+## When is it useful?
+A typical case in which it is possible to save time and number of files in the project can be found in the Data Transfer Object (DTO), whose task is only to host information to be transferred from one "system" to another. Using *DataObjectBuilder* it will be possible to manage the problem by defining only an interface that represents the DTO and, when generating an "interface instance", just call the  ```Create<TInterface>(source)``` method, where source can be any structured object: ```Object``` (with properties), ```AnonymousObject```, ```JObject```, ```Tuple```, ```ValueTuple```, ```IDictionary<string, object>```, ```ExpandoObject``` (dynamic).  
+Another case may be where you need to "reduce" the number of information of a class by removing some properties from the object. Instead of creating a new reduced class or a hierarchy of classes and subclasses, you can define an interface with only the properties you want to expose and let the ``Create<TInterface>(source)`` method transfer the information from the class to the created "interface instance" for the properties defined in the interface itself.  
+Obviously the cases are not limited to just these two, but they are certainly the most typical ones, which probably almost all developers have encountered in the course of their work.
+
+
+## Advanced Features
+
 ...
 
-## Come funziona?
-Finora abbiamo parlato di "istanza di interfaccia" utilizzando le virgolette. Questo è necessario perchè come ben sappiamo non è possibile creare istanze di interfacce.  
-La piattaforma .Net mette a disposizione svariate classi nel namespace ```System.Reflection.Emit``` che si occupano della creazione dinamica di Assemblies, Classi e tipi in generale, Campi, Proprietà, Metodi e qualunque altro costrutto presente nel runtime.  
-Grazie a questi strumenti l'implementazione di *DataObjectBuilder* fa si che al momento della chiamata del metodo ```Create<TInterface>(source)```, dinamicamente si generi una classe che implementa l'interfaccia passata come argomento generico e che, di conseguenza, contenga le proprietà di tale interfaccia (se la richiesta per quell'interfaccia è già stata fatta in precedenza la classe sarà già stata definita e non verrà ricreata).  
-Appena generata o recuperata la classe di destinazione, *DataObjectBuilder* si occuperà di creare un'istanza della classe e copiarci i valori contenuti nell'oggetto source.  
-A seconda dell'oggetto sorgente i valori verranno letti da:
-- proprietà, nel caso di: ```Object```, ```AnonymousObject```
-- proprietà definite, nel caso di ```JObject```
-- entries, nel caso di ```IDictionary<string, object>```, ```ExpandoObject```
-- campi, nel caso di ```Tuple```, ```ValueTuple```
 
-Riguardo a ```ValueTuple``` è necessario ricordare che i nomi dei campi definiti nel codice sorgente non vengono esportati durante la compilazione e sono di fatto "syntactic sugar". Pertanto in caso di ```Tuple``` o ```ValueTuple``` come oggetto sorgente, se non viene specificato un mapping diverso, i valori verranno letti in ordine (Item1, Item2, Item3, ecc.) e copiati sulle proprietà dell'oggetto di destinazione nell'ordine in cui vengono recurate dalle operazioni di reflection.
+## How it works?
 
-## Utilizzo
+So far we have talked about "interface instance" using quotes. This is necessary because as we know it is not possible to create interface instances.  
+The .Net platform provides several classes in the ``System.Reflection.Emit`` namespace that deal with the dynamic creation of Assemblies, Classes and Types in general, Fields, Properties, Methods and any other construct present in the runtime.  
+Thanks to these tools, the implementation of *DataObjectBuilder* makes it possible to dynamically generate a class that implements the interface passed as a generic argument and that, consequently, contains its properties. If the request for that interface has already been made previously, the class will have already been defined and will not be recreated.  
+As soon as the target class is generated or retrieved, *DataObjectBuilder* will create an instance of the class and copy the values contained in the source object.  
+Depending on the source object the values will be read by:
+- properties, in case of: ```Object```, ```AnonymousObject```.
+- defined properties, in the case of ``JObject``.
+- entries, in the case of ``IDictionary<string, object>``, ``ExpandoObject``.
+- fields, in case of ```Tuple```, ```ValueTuple```.
 
-*DataObjectBuilder* si presenta come un classe statica che espone la proprietà *Default*, la quale restituisce appunto la Factory di default.
-In questa formulazione l'uso diventa molto semplice e si limita alla sola chiamata:
+About ```ValueTuple``` it is necessary to remember that the field names defined in the source code are not exported during compilation and are in fact "syntactic sugar". Therefore in case of ```Tuple``` or ```ValueTuple``` as source object, unless a different mapping is specified, the values will be read in order (Item1, Item2, Item3, etc.) and copied on the properties of the target object in the order in which they are retrieved by reflection operations.
+
+
+## Usage
+
+*DataObjectBuilder* is a static class that displays the *Default* property, which returns the default Factory.
+In this formulation the use becomes very simple and is limited only to the call:
+
 ```csharp
 IMyInterface result = DataObjectBuilder.Default.Create<IMyInterface>(source);
 ```
-> vedi la sezione esempi
 
-Se si desidera una configurazione diversa da quella di default, come ad esempio un maggiore controllo nel caso di proprietà mancanti o tipi non corrispondenti o se si volesse specificare un mapping personalizzato o, ancora, applicare delle trasformazioni, è possibile creare una Factory con delle opzioni che rispondano a queste casistiche e definiscano le operazioni personalizzate:
+> see examples section
+
+If you want a different configuration from the default one, such as more control in case of missing properties and mismatched types, or if you want to specify a custom mapping or apply transformations, you can create a Factory with options that respond to these cases and define custom operations:
+
 ```csharp
 var options = new DataObjectBuilderOptions<IMyInterface>();
 // configure options
@@ -49,19 +60,22 @@ var factory = DataObjectBuilder.Factory<IMyInterface>(options);
 
 IMyInterface result = factory.Create(source);
 ```
-> vedi la sezione esempi
+
+> see examples section
 
 ### DataObjectBuilderOptions
 
-L'oggetto *DataObjectBuilderOptions* permette di specificare come gestire l'operazione di trasferimento dei dati. Tramite queste opzioni è possibile specificare i seguenti comportamenti:
-- Eccezione nel caso l'oggetto sorgente non contenga una delle proprietà dell'oggetto di destinazione. Se non specificato questo errore viene ignorato.  
+The *DataObjectBuilderOptions* object allows you to specify how to manage the data transfer operation. Through these options you can set the following behaviors:
+- Exception in case the source object does not contain one of the properties of the target object. If not specified this error is ignored.  
 ```options.ThrowOnMissingSourceMember = true;```
-- Eccezione nel caso la proprietà dell'oggetto sorgente sia di un tipo non assegnabile alla corrispondente proprietà dell'oggetto di destinazione. Se non specificato questo errore viene ignorato.  
-```options.ThrowOnInvalidSourceMemberType = true;```
-- Recupero personalizzato dei valori dall'oggetto sorgente in base all'espressione impostata nella proprietà ```Expression<Func<object, IDictionary<string, object>>> ReadSourceProperties { get; set; }```, la quale, utilizzando l'oggetto source passato nella lamba function, dovrà restituire un dizionario di chiave/valore rappresentante le proprietà
-- Mapping di una o più proprietà dell'oggetto sorgente sulle proprietà dell'oggetto di destinazione. Può essere specificato solo per le proprietà che ne necessitano.  
+- Exception in case the property of the source object is a type that cannot be assigned to the corresponding property of the target object. If not specified, this error is ignored.  
+```options.ThrowOnInvalidSourceMemberType = true;```.
+- Custom retrieval of the values from the source object according to the expression set in the property ```Expression<Func<object, IDictionary<string, object>>> ReadSourceProperties { get; set; }```, which, using the source object passed in the lamba function, must return a key/value dictionary representing the properties.
+- Mapping one or more properties of the source object to the properties of the target object. If desired, it can be specified only for the properties that need it.  
 ```options.Mapping.Member(d => d.MyProp1, "Prop1")```
-- Trasformazione finale dei valori letti dall'oggetto sorgente in base all'espressione impostata nella proprietà ```Expression<Func<string, object, object>> TransformValue { get; set; }```, la quale riceverà in input il nome del membro corrente ed il suo valore e dovrà restituire il nuovo valore trasformato in base al criterio definito
+- Final transformation of the values read by the source object according to the expression set in the property ```Expression<Func<string, object, object>> TransformValue { get; set; }```, which will receive as input the name of the current member and its value and must return the new transformed value according to the defined criteria.
 
-## Esempi
+
+## Examples
+
 ...
