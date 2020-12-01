@@ -2,7 +2,7 @@
 # DataObjectBuilder
 
 Definendolo nella maniera più semplice è possibile dire che *DataObjectBuilder* permette la creazione di "istanze di interfacce".  
-La creazione può avvenire a partire da un'istanza di un oggetto qualunque (che ovviamente non implementi l'interfaccia in questione), da un Oggetto Anonimo, da un JObject, da una Tuple o ValueTuple, da un Dizionario o da un oggetto dinamico.
+La creazione può avvenire a partire da una qualunque istanza di Oggetto (che ovviamente non implementi l'interfaccia in questione), da un Oggetto Anonimo, da un JObject, da una Tuple o ValueTuple, da un Dizionario o da un oggetto dinamico.
 
 
 ## Premessa

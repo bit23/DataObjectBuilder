@@ -2,7 +2,7 @@
 # DataObjectBuilder
 
 Defining it in the simplest way you can say that *DataObjectBuilder* allows the creation of "interface instances".  
-The creation can be made from an instance of any object (which obviously does not implement the interface in question), an Anonymous Object, a JObject, a Tuple or ValueTuple, a Dictionary or a dynamic object.
+The creation can be made from any instance of Object (which obviously does not implement the interface in question), an Anonymous Object, a JObject, a Tuple or ValueTuple, a Dictionary or a dynamic object.
 
 
 ## Introduction
