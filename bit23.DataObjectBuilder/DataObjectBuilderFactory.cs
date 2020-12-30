@@ -18,14 +18,14 @@ namespace bit23
         }
 
 
-        public TInterface Create<TInterface>(object source)
+        public TInterface Create<TInterface>(object source, DataObjectBuilderOptions<TInterface> options = null)
         {
-            return DataObjectBuilder.BuildInterfaceClass<TInterface>(source, null, this.options);
+            return DataObjectBuilder.BuildInterfaceClass<TInterface>(source, null, options ?? this.options);
         }
 
-        public TInterface Create<TInterface>(ITuple source, IEnumerable<string> elementNames = null)
+        public TInterface Create<TInterface>(ITuple source, IEnumerable<string> elementNames = null, DataObjectBuilderOptions<TInterface> options = null)
         {
-            return DataObjectBuilder.BuildInterfaceClass<TInterface>(source, elementNames?.ToArray(), this.options);
+            return DataObjectBuilder.BuildInterfaceClass<TInterface>(source, elementNames?.ToArray(), options ?? this.options);
         }
 
 

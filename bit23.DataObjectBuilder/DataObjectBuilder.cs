@@ -123,10 +123,19 @@ namespace bit23
             foreach (var targetProp in targetProperties)
             {
                 var p = sourceType.GetProperty(targetProp.Name);
-                if (!targetProp.PropertyType.IsAssignableFrom(p.PropertyType))
+                if (p != null)
                 {
-                    if (options.ThrowOnInvalidSourceMemberType)
-                        throw new Exception("invalid source member type");
+                    if (!targetProp.PropertyType.IsAssignableFrom(p.PropertyType))
+                    {
+                        if (options.ThrowOnInvalidSourceMemberType)
+                            throw new Exception("invalid source member type");
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (options.ThrowOnMissingSourceMember)
+                        throw new Exception("missing source member");
                     continue;
                 }
 
@@ -139,10 +148,8 @@ namespace bit23
         private static IDictionary<string, object> GetObjectAsPropertyDictionary(ITuple source, PropertyInfo[] targetProperties, string[] tupleElementNames, DataObjectBuilderOptions options)
         {
             var result = new Dictionary<string, object>();
-            var sourceType = source.GetType();
 
             var nameIndex = -1;
-            var properties = sourceType.GetTypeInfo().DeclaredFields;
             foreach (var targetProp in targetProperties)
             {
                 nameIndex++;
