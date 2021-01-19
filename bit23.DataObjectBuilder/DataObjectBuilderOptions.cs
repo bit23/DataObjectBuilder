@@ -28,7 +28,7 @@ namespace bit23
             get
             {
                 if (this.transformValueFunc == null)
-                    this.transformValueFunc = this.TransformValue.Compile();
+                    this.transformValueFunc = this.TransformValue;
                 return this.transformValueFunc;
             }
         }
@@ -39,7 +39,7 @@ namespace bit23
 
         public Expression<Func<object, IDictionary<string, object>>> ReadSourceProperties { get; set; }
 
-        public Expression<Func<string, object, object>> TransformValue { get; set; }
+        public Func<string, object, object> TransformValue { get; set; }
 
         public bool ThrowOnMissingSourceMember { get; set; }
 

@@ -129,14 +129,14 @@ namespace bit23
                     {
                         if (options.ThrowOnInvalidSourceMemberType)
                             throw new Exception("invalid source member type");
-                        continue;
+                       // continue;
                     }
                 }
                 else
                 {
                     if (options.ThrowOnMissingSourceMember)
                         throw new Exception("missing source member");
-                    continue;
+                    //continue;
                 }
 
                 result.Add(targetProp.Name, p.GetMethod.Invoke(source, null));
@@ -202,7 +202,7 @@ namespace bit23
                 {
                     if (options.ThrowOnMissingSourceMember)
                         throw new Exception($"missing source member '{targetProp.Name}'");
-                    continue;
+                    //continue;
                 }
 
                 object propValue = null;
@@ -215,7 +215,7 @@ namespace bit23
                 {
                     if (options.ThrowOnInvalidSourceMemberType)
                         throw new Exception("invalid source member type");
-                    continue;
+                    //continue;
                 }
 
                 result.Add(targetProp.Name, propValue);
@@ -452,7 +452,8 @@ namespace bit23
         internal static T BuildInterfaceClass<T>(object source, string[] tupleElementNames = null, DataObjectBuilderOptions options = null)
         {
             if (source == null)
-                throw new ArgumentNullException(nameof(source));
+                //throw new ArgumentNullException(nameof(source));
+                return default;
 
             var ttype = typeof(T);
             if (!ttype.IsInterface)
